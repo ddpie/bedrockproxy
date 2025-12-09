@@ -122,7 +122,7 @@ Service: Amazon CloudFront/Region: US East (Northern Virginia)/Limit name: Respo
    
    编辑 `test/connectivity_test.py`，将 CloudFront 端点替换为你的实际域名：
    ```python
-   CLOUDFRONT_ENDPOINT = "https://YOUR_CLOUDFRONT_DOMAIN.cloudfront.net"
+   CLOUDFRONT_ENDPOINT = "https://YOUR_CLOUDFRONT_DOMAIN"
    ```
 
 2. **安装依赖**
@@ -171,9 +171,3 @@ Claude 3.5 Sonnet              us-west-2            FAIL       OK         1.67s
 
 结论: 代理测试全部通过！
 ```
-
-### 测试说明
-
-- **直连失败是正常的**: 如果你在不支持的地区（如中国），直连 Bedrock 会因为地理位置限制而失败
-- **代理成功**: CloudFront 代理可以绕过地理位置限制，实现全球访问
-- **响应时间**: 显示每个请求的实际响应时间，便于性能评估
