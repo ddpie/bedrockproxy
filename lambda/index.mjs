@@ -23,13 +23,6 @@ export const handler = async (event) => {
 
         const region = credentialMatch[3];
 
-        // 验证区域
-        const validRegions = ['us-east-1', 'us-west-2', 'ap-northeast-1', 'eu-west-1'];
-        if (!validRegions.includes(region)) {
-            console.log('Invalid region:', region);
-            return request;
-        }
-
         // 记录原始请求头
         //console.log('Original headers:', JSON.stringify(request.headers, null, 2));
 
