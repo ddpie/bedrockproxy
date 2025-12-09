@@ -1,0 +1,63 @@
+# CDK
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+cdk.out
+
+# Compiled output
+*.js.map
+*.d.ts.map
+dist/
+build/
+
+# Test files
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python (test scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+
+# Test artifacts
+test_results/
+*.test.js
+
+# AWS
+.aws-sam/
+samconfig.toml
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

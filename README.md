@@ -109,3 +109,71 @@ Service: Amazon CloudFront/Region: US East (Northern Virginia)/Limit name: Respo
    - 要删除所有资源，运行 `cdk destroy`
 
 注意：首次在账户/区域中使用 CDK 时，可能需要运行 `cdk bootstrap` 来设置 CDK 工具包。
+
+---
+
+## 连通性测试
+
+部署完成后，可以使用提供的测试脚本验证代理是否正常工作。
+
+### 使用测试脚本
+
+1. **配置端点地址**
+   
+   编辑 `test/connectivity_test.py`，将 CloudFront 端点替换为你的实际域名：
+   ```python
+   CLOUDFRONT_ENDPOINT = "https://YOUR_CLOUDFRONT_DOMAIN.cloudfront.net"
+   ```
+
+2. **安装依赖**
+   ```bash
+   pip3 install boto3
+   ```
+
+3. **运行测试**
+   ```bash
+   python3 test/connectivity_test.py
+   ```
+
+### 测试内容
+
+测试脚本会自动执行以下测试：
+
+- **多区域测试**: us-west-2, us-east-1, ap-northeast-1, eu-west-1
+- **多模型测试**: Claude 3.5 Sonnet, Claude Sonnet 4.5, Claude 3 Haiku
+- **对比测试**: 同时测试直连 Bedrock 和通过 CloudFront 代理两种方式
+
+### 测试输出
+
+测试脚本会显示：
+- 实时测试进度和结果
+- 每个请求的响应时间
+- 模型响应内容和 Token 使用情况
+- 详细的错误信息（如果失败）
+- 汇总统计表格
+
+示例输出：
+```
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                      Bedrock CloudFront 代理连通性测试                         ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+[1] Claude 3.5 Sonnet @ us-west-2
+  [直连] 测试 Claude 3.5 Sonnet @ us-west-2... FAIL (ValidationException)
+  [代理] 测试 Claude 3.5 Sonnet @ us-west-2... OK (1.67s)
+      响应: Hello! How can I assist you today?...
+      Token: 输入=8, 输出=30
+
+模型                             区域                   直连         代理         响应时间        
+-------------------------------------------------------------------------------------
+Claude 3.5 Sonnet              us-west-2            FAIL       OK         1.67s       
+...
+
+结论: 代理测试全部通过！
+```
+
+### 测试说明
+
+- **直连失败是正常的**: 如果你在不支持的地区（如中国），直连 Bedrock 会因为地理位置限制而失败
+- **代理成功**: CloudFront 代理可以绕过地理位置限制，实现全球访问
+- **响应时间**: 显示每个请求的实际响应时间，便于性能评估
