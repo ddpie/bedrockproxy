@@ -8,8 +8,8 @@ import sys
 import time
 
 # 配置 CloudFront 端点
-# 部署后请将此处替换为你的 CloudFront 域名，例如 https://aabbccdd.cloudfront.net
-CLOUDFRONT_ENDPOINT = "https://<YOUR_CLOUDFRONT_DOMAIN>"
+# 部署后请将此处替换为你的 CloudFront 域名
+CLOUDFRONT_ENDPOINT = "https://xxx.cloudfront.net"
 
 # 测试模型列表（按区域）
 TEST_MODELS = {

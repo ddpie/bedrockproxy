@@ -4,6 +4,38 @@
 
 本方案利用 AWS CloudFront 和 Lambda@Edge 为 Amazon Bedrock API 提供全球加速和智能路由服务。通过这种设置，我们可以显著提高 API 的访问速度，降低延迟，并实现更灵活的请求处理。
 
+## 架构图
+
+```mermaid
+graph TB
+    User[用户/应用程序] -->|1. 发送请求| CF[CloudFront Distribution]
+    CF -->|2. 触发| Lambda[Lambda@Edge<br/>Origin Request]
+    Lambda -->|3. 解析 Authorization 头<br/>提取区域信息| Lambda
+    Lambda -->|4. 验证区域| Lambda
+    Lambda -->|5. 修改请求头<br/>设置 User-Agent| Lambda
+    Lambda -->|6. 动态设置源| Lambda
+    
+    Lambda -->|7a. 路由到 us-east-1| BR1[Bedrock API<br/>us-east-1]
+    Lambda -->|7b. 路由到 us-west-2| BR2[Bedrock API<br/>us-west-2]
+    Lambda -->|7c. 路由到 ap-northeast-1| BR3[Bedrock API<br/>ap-northeast-1]
+    Lambda -->|7d. 路由到 eu-west-1| BR4[Bedrock API<br/>eu-west-1]
+    
+    BR1 -->|8. 返回响应| CF
+    BR2 -->|8. 返回响应| CF
+    BR3 -->|8. 返回响应| CF
+    BR4 -->|8. 返回响应| CF
+    
+    CF -->|9. 返回给用户| User
+    
+    style CF fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+    style Lambda fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
+    style BR1 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style BR2 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style BR3 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style BR4 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
+    style User fill:#232F3E,stroke:#FF9900,stroke-width:2px,color:#fff
+```
+
 ## 为什么使用 CloudFront 进行加速？
 
 1. **全球内容分发网络 (CDN)**: CloudFront 拥有遍布全球的边缘位置，可以大幅减少用户访问 Bedrock API 的延迟。
@@ -122,7 +154,7 @@ Service: Amazon CloudFront/Region: US East (Northern Virginia)/Limit name: Respo
    
    编辑 `test/connectivity_test.py`，将 CloudFront 端点替换为你的实际域名：
    ```python
-   CLOUDFRONT_ENDPOINT = "https://YOUR_CLOUDFRONT_DOMAIN"
+   CLOUDFRONT_ENDPOINT = "https://xxx.cloudfront.net"
    ```
 
 2. **安装依赖**
