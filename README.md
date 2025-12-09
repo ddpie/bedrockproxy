@@ -7,33 +7,32 @@
 ## 架构图
 
 ```mermaid
-graph TB
-    User[用户/应用程序] -->|1. 发送请求| CF[CloudFront Distribution]
-    CF -->|2. 触发| Lambda[Lambda@Edge<br/>Origin Request]
-    Lambda -->|3. 解析 Authorization 头<br/>提取区域信息| Lambda
-    Lambda -->|4. 验证区域| Lambda
-    Lambda -->|5. 修改请求头<br/>设置 User-Agent| Lambda
-    Lambda -->|6. 动态设置源| Lambda
+graph LR
+    A[用户应用]
+    B[CloudFront]
+    C[Lambda Edge]
+    D1[Bedrock us-east-1]
+    D2[Bedrock us-west-2]
+    D3[Bedrock ap-northeast-1]
+    D4[Bedrock eu-west-1]
     
-    Lambda -->|7a. 路由到 us-east-1| BR1[Bedrock API<br/>us-east-1]
-    Lambda -->|7b. 路由到 us-west-2| BR2[Bedrock API<br/>us-west-2]
-    Lambda -->|7c. 路由到 ap-northeast-1| BR3[Bedrock API<br/>ap-northeast-1]
-    Lambda -->|7d. 路由到 eu-west-1| BR4[Bedrock API<br/>eu-west-1]
+    A -->|1.请求| B
+    B -->|2.触发| C
+    C -->|3.路由| D1
+    C -.->|路由| D2
+    C -.->|路由| D3
+    C -.->|路由| D4
+    D1 -->|4.响应| B
+    D2 -.->|响应| B
+    D3 -.->|响应| B
+    D4 -.->|响应| B
+    B -->|5.返回| A
     
-    BR1 -->|8. 返回响应| CF
-    BR2 -->|8. 返回响应| CF
-    BR3 -->|8. 返回响应| CF
-    BR4 -->|8. 返回响应| CF
-    
-    CF -->|9. 返回给用户| User
-    
-    style CF fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
-    style Lambda fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#fff
-    style BR1 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
-    style BR2 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
-    style BR3 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
-    style BR4 fill:#527FFF,stroke:#232F3E,stroke-width:2px,color:#fff
-    style User fill:#232F3E,stroke:#FF9900,stroke-width:2px,color:#fff
+    linkStyle 0 stroke:#2196F3,stroke-width:4px
+    linkStyle 1 stroke:#2196F3,stroke-width:4px
+    linkStyle 2 stroke:#2196F3,stroke-width:4px
+    linkStyle 6 stroke:#4CAF50,stroke-width:4px
+    linkStyle 10 stroke:#4CAF50,stroke-width:4px
 ```
 
 ## 为什么使用 CloudFront 进行加速？
@@ -187,7 +186,7 @@ Service: Amazon CloudFront/Region: US East (Northern Virginia)/Limit name: Respo
 示例输出：
 ```
 ╔════════════════════════════════════════════════════════════════════════════════╗
-║                      Bedrock CloudFront 代理连通性测试                         ║
+║                      Bedrock CloudFront 代理连通性测试                           ║
 ╚════════════════════════════════════════════════════════════════════════════════╝
 
 [1] Claude 3.5 Sonnet @ us-west-2
